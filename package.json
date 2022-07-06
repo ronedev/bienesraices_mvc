@@ -1,0 +1,24 @@
+{
+  "name": "bienesraices_mvc",
+  "version": "1.0.0",
+  "description": "Proyecto de Bienes Raices con express y React",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node ./index.js",
+    "server": "nodemon index.js"
+  },
+  "keywords": [
+    "node",
+    "react",
+    "tailwind"
+  ],
+  "author": "Vera Agustin",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.19"
+  }
+}

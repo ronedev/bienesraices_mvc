@@ -1,9 +1,9 @@
 import express from 'express'
+import { formularioLogin, formularioRegistro } from '../controllers/usuariosController.js'
 
 const router = express.Router()
 
-router.get('/', function(req, res){
-    res.send('Get desde Express')
-})
+router.get('/login', formularioLogin)
+router.get('/signup', formularioRegistro)
 
 export default router

@@ -5,8 +5,11 @@ import usuarioRoutes from './routes/usuarioRoutes.js'
 //Creacion de la app
 const app = express()
 
+app.set('view engine', 'pug')
+app.set('views', './views')
+
 //Routing
-app.use('/', usuarioRoutes)
+app.use('/auth', usuarioRoutes)
 
 
 

@@ -1,1 +1,24 @@
-h2 Crea tu cuenta
+extends ../layouts/index.pug
+
+block contenidoMain
+    div(class="py-2")
+        h1(class="text-4xl mb-6 font-extrabold text-center") Bienes
+            span.font-normal Raices
+        h2(class= "text-center font-extrabold text-2xl")= page
+
+        div.mt-4.mx-auto.max-w-md
+            div.bg-white.py-6.px-4.shadow
+                form.space-y-2
+                    div 
+                        label(for="name").block.text-sm.text-gray-500.mb-3.font-bold Ingresa tu nombre 
+                        input(type="text" id="name" placeholder="Ingrese su nombre" required).w-full.px-3.py-1.border.border-gray-300.rounded-md.placeholder-gray-400.text-sm
+                    div 
+                        label(for="email").block.text-sm.text-gray-500.mb-3.font-bold Email de registro
+                        input(type="email" id="email" placeholder="Ingrese su email" required).w-full.px-3.py-1.border.border-gray-300.rounded-md.placeholder-gray-400.text-sm
+                    div 
+                        label(for="password").block.text-sm.text-gray-500.mb-3.font-bold Cree su contraseña
+                        input(type="password" id="password" placeholder="Ingrese su contraseña" required).w-full.px-3.py-1.border.border-gray-300.rounded-md.placeholder-gray-400.text-sm
+                    div 
+                        label(for="repetir_password").block.text-sm.text-gray-500.mb-3.font-bold Repita su contraseña
+                        input(type="password" id="repetir_password" placeholder="Ingrese su contraseña" required).w-full.px-3.py-1.border.border-gray-300.rounded-md.placeholder-gray-400.text-sm
+                    input(type="submit" value="Crear Cuenta" class="w-full bg-blue-500 text-white font-semibold uppercase text-sm py-2 rounded hover:bg-blue-400 hover:text-gray-600 cursor-pointer")

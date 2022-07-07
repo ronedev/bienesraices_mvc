@@ -6,9 +6,13 @@ import database from './config/database.js'
 //Creacion de la app
 const app = express()
 
+//Habilitar lectura de datos
+app.use(express.urlencoded({extended: true}))
+
 //Conexion a la base de datos
 try {
     await database.authenticate()
+    database.sync()
     console.log('Conexion correcta a la base de datos')
 } catch (error) {
     console.log(error)

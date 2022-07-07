@@ -1,5 +1,7 @@
 import { check, validationResult } from "express-validator";
 import Usuario from "../models/Usuario.js";
+import { generarId } from "../helpers/tokens.js";
+import { emailRegistro } from "../helpers/emails.js";
 
 const formularioLogin = (req, res) => {
   res.render("auth/login", {
@@ -14,7 +16,9 @@ const formularioRegistro = (req, res) => {
 };
 
 const registrar = async (req, res) => {
-  console.log(req.body)
+
+  const {name, email, password} = req.body
+
   //Validacion
   await check("name")
     .notEmpty()
@@ -28,13 +32,11 @@ const registrar = async (req, res) => {
     .isLength({ min: 6 })
     .withMessage("La contraseña debe tener al menos 6 caracteres")
     .run(req);
-  await check("repetir_password").equals(req.body.password)
+  await check("repetir_password").equals(password)
     .withMessage("Las contrañas deben ser iguales")
     .run(req);
 
   let result = validationResult(req);
-
-  console.log(result)
 
   //Verificacion de errores
   if (!result.isEmpty()) {
@@ -43,14 +45,14 @@ const registrar = async (req, res) => {
       page: "Crear cuenta",
       errors: result.array(),
       user: {
-        name: req.body.name,
-        email: req.body.email
+        name: name,
+        email: email
       }
     });
   }
 
   //Verificacion de usuario duplicado
-  const existingUser = await Usuario.findOne({where: {email: req.body.email}})
+  const existingUser = await Usuario.findOne({where: {email}})
 
   if(existingUser){
     //Email ya utilizado
@@ -58,10 +60,32 @@ const registrar = async (req, res) => {
       page: "Crear cuenta",
       errors: [{msg: 'El email ingresado se encuentra actualmente en uso'}],
       user: {
-        name: req.body.name,
+        name: name,
       }
     });
   }
+
+  const user = await Usuario.create({
+    name,
+    email,
+    password,
+    token: generarId()
+  })
+
+  //Envia email de confirmacion
+  emailRegistro({
+    name: user.name,
+    email: user.email,
+    token: user.token
+  })
+
+  //Mostrar mensaje de confirmacion
+  res.render('templates/mensaje',{
+    page: 'Cuenta creada correctamente',
+    message: `Hemos enviado un email de confirmacion a '${email}'. Verifique su cuenta para continuar`
+  })
+
+
   // const usuario = await Usuario.create(req.body);
   // res.json(usuario);
 };

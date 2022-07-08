@@ -12,12 +12,12 @@ const formularioLogin = (req, res) => {
 const formularioRegistro = (req, res) => {
   res.render("auth/registro", {
     page: "Crear cuenta",
+    csrfToken: req.csrfToken(),
   });
 };
 
 const registrar = async (req, res) => {
-
-  const {name, email, password} = req.body
+  const { name, email, password } = req.body;
 
   //Validacion
   await check("name")
@@ -32,7 +32,8 @@ const registrar = async (req, res) => {
     .isLength({ min: 6 })
     .withMessage("La contraseña debe tener al menos 6 caracteres")
     .run(req);
-  await check("repetir_password").equals(password)
+  await check("repetir_password")
+    .equals(password)
     .withMessage("Las contrañas deben ser iguales")
     .run(req);
 
@@ -43,25 +44,27 @@ const registrar = async (req, res) => {
     //Con errores
     return res.render("auth/registro", {
       page: "Crear cuenta",
+      csrfToken: req.csrfToken(),
       errors: result.array(),
       user: {
         name: name,
-        email: email
-      }
+        email: email,
+      },
     });
   }
 
   //Verificacion de usuario duplicado
-  const existingUser = await Usuario.findOne({where: {email}})
+  const existingUser = await Usuario.findOne({ where: { email } });
 
-  if(existingUser){
+  if (existingUser) {
     //Email ya utilizado
     return res.render("auth/registro", {
       page: "Crear cuenta",
-      errors: [{msg: 'El email ingresado se encuentra actualmente en uso'}],
+      csrfToken: req.csrfToken(),
+      errors: [{ msg: "El email ingresado se encuentra actualmente en uso" }],
       user: {
         name: name,
-      }
+      },
     });
   }
 
@@ -69,25 +72,50 @@ const registrar = async (req, res) => {
     name,
     email,
     password,
-    token: generarId()
-  })
+    token: generarId(),
+  });
 
   //Envia email de confirmacion
   emailRegistro({
     name: user.name,
     email: user.email,
-    token: user.token
-  })
+    token: user.token,
+  });
 
   //Mostrar mensaje de confirmacion
-  res.render('templates/mensaje',{
-    page: 'Cuenta creada correctamente',
-    message: `Hemos enviado un email de confirmacion a '${email}'. Verifique su cuenta para continuar`
-  })
-
+  res.render("templates/mensaje", {
+    page: "Cuenta creada correctamente",
+    message: `Hemos enviado un email de confirmacion a '${email}'. Verifique su cuenta para continuar`,
+  });
 
   // const usuario = await Usuario.create(req.body);
   // res.json(usuario);
+};
+
+const confirmarRegistro = async (req, res) => {
+  const { token } = req.params;
+
+  //Verificar si el token corresponde a uno válido
+  const user = await Usuario.findOne({ where: { token } });
+
+  if (!user) {
+    //Token no válido
+    return res.render("auth/confirm-account", {
+      page: "Error al confirmar tu cuenta",
+      message: "Hubo un error al confirmar tu cuenta, intenta nuevamente",
+      error: true,
+    });
+  }
+
+  //Confirmar la cuenta
+  user.token = null;
+  user.confirmed = true;
+  await user.save();
+
+  res.render("auth/confirm-account", {
+    page: "Cuenta verificada",
+    message: "La cuenta se verificó correctamente",
+  });
 };
 
 const formularioOlvideContraseña = (req, res) => {
@@ -99,6 +127,7 @@ const formularioOlvideContraseña = (req, res) => {
 export {
   formularioLogin,
   formularioRegistro,
+  confirmarRegistro,
   formularioOlvideContraseña,
   registrar,
 };

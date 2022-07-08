@@ -1,7 +1,8 @@
 import { check, validationResult } from "express-validator";
+import bcrypt from 'bcrypt'
 import Usuario from "../models/Usuario.js";
 import { generarId } from "../helpers/tokens.js";
-import { emailRegistro } from "../helpers/emails.js";
+import { emailForgotPassword, emailRegistro } from "../helpers/emails.js";
 
 const formularioLogin = (req, res) => {
   res.render("auth/login", {
@@ -121,13 +122,127 @@ const confirmarRegistro = async (req, res) => {
 const formularioOlvideContraseña = (req, res) => {
   res.render("auth/forgot-password", {
     page: "Recupere su acceso a Bienes Raices",
+    csrfToken: req.csrfToken(),
   });
 };
 
+const resetPassword = async (req, res) => {
+  //Validacion
+  await check("email")
+    .isEmail()
+    .withMessage("Ingrese un email valido")
+    .run(req);
+
+  let result = validationResult(req);
+
+  //Verificacion de errores
+  if (!result.isEmpty()) {
+    //Con errores
+    return res.render("auth/forgot-password", {
+      page: "Recupere su acceso a Bienes Raices",
+      csrfToken: req.csrfToken(),
+      errors: result.array(),
+    });
+  }
+
+  const { email } = req.body;
+
+  //Buscamos el usuario donde el email sea igual al email ingresado
+  const user = await Usuario.findOne({ where: { email } });
+
+  if (!user) {
+    //Si no hay usuario coincidente
+    return res.render("auth/forgot-password", {
+      page: "Recupere su acceso a Bienes Raices",
+      csrfToken: req.csrfToken(),
+      errors: [{ msg: "El email ingresado no pertenece a ningun usuario" }],
+    });
+  }
+
+  //Generar token y enviar el email para restear password
+  user.token = generarId();
+  await user.save();
+
+  //Enviar email
+  emailForgotPassword({
+    name: user.name,
+    email,
+    token: user.token,
+  });
+
+  //Render de mensaje al usuario para que revise el email
+  res.render("templates/mensaje", {
+    page: "Restablece tu contraseña",
+    message: `Hemos enviado un email con las instrucciones para resetear la contraseña a '${email}'.`,
+  });
+};
+
+const comprobarToken = async (req, res) => {
+  const { token } = req.params;
+
+  const user = await Usuario.findOne({ where: { token } });
+
+  if (!user) {
+    return res.render("auth/confirm-account", {
+      page: "Restablece tu contraseña",
+      message: "Hubo un error al validar tu información, intenta nuevamente",
+      error: true,
+    });
+  }
+
+  //Mostrar formulario para modificar la contraseña
+
+  res.render("auth/reset-password", {
+    page: "Restablece tu contraseña",
+    csrfToken: req.csrfToken(),
+  });
+};
+
+const nuevoPassword = async (req, res) => {
+  //Validar password
+  await check("password")
+    .isLength({ min: 6 })
+    .withMessage("La contraseña debe tener al menos 6 caracteres")
+    .run(req);
+
+  let result = validationResult(req);
+
+  //Verificacion de errores
+  if (!result.isEmpty()) {
+    //Con errores
+    return res.render("auth/reset-password", {
+      page: "Restablece tu contraseña",
+      csrfToken: req.csrfToken(),
+      errors: result.array(),
+    });
+  }
+
+  //Identificar al usuario
+  const { token } = req.params;
+  const { password } = req.body;
+
+  const user = await Usuario.findOne({ where: { token } });
+
+  //Hashear password
+  const salt = await bcrypt.genSalt(10);
+  user.password = await bcrypt.hash(password, salt);
+  
+  user.token = null
+
+  await user.save()
+
+  res.render('auth/confirm-account',{
+    page: '¡Has modificado tu contraseña correctamente!',
+    message: 'La nueva contraseña se guardo correctamente'
+  })
+};
 export {
   formularioLogin,
   formularioRegistro,
   confirmarRegistro,
   formularioOlvideContraseña,
   registrar,
+  resetPassword,
+  comprobarToken,
+  nuevoPassword,
 };

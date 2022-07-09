@@ -1,5 +1,5 @@
 import { check, validationResult } from "express-validator";
-import bcrypt from 'bcrypt'
+import bcrypt from "bcrypt";
 import Usuario from "../models/Usuario.js";
 import { generarId } from "../helpers/tokens.js";
 import { emailForgotPassword, emailRegistro } from "../helpers/emails.js";
@@ -7,7 +7,65 @@ import { emailForgotPassword, emailRegistro } from "../helpers/emails.js";
 const formularioLogin = (req, res) => {
   res.render("auth/login", {
     page: "Iniciar Sesión",
+    csrfToken: req.csrfToken(),
   });
+};
+
+const authenticate = async (req, res) => {
+  //Validación
+  await check("email")
+    .isEmail()
+    .withMessage("Ingrese un email valido")
+    .run(req);
+  await check("password")
+    .notEmpty()
+    .withMessage("Ingrese su contraseña")
+    .run(req);
+
+  let result = validationResult(req);
+
+  //Verificacion de errores
+  if (!result.isEmpty()) {
+    //Con errores
+    return res.render("auth/login", {
+      page: "Ingresar",
+      csrfToken: req.csrfToken(),
+      errors: result.array(),
+    });
+  }
+
+  //Comprobar si el usuario existe
+  const {email, password} = req.body
+
+  const user = await Usuario.findOne({where: {email}})
+
+  if(!user){
+    //Usuario no existente
+    return res.render("auth/login", {
+      page: "Ingresar",
+      csrfToken: req.csrfToken(),
+      errors: [{msg: 'El email ingresado no corresponde a un usuario activo'}]
+    });
+  }
+
+  if(!user.confirmed){
+    //Usuario existente pero con cuenta con verificada
+    return res.render("auth/login", {
+      page: "Ingresar",
+      csrfToken: req.csrfToken(),
+      errors: [{msg: 'Tu cuenta se encuentra pendiente de verificación'}]
+    });
+  }
+
+  //Verificar password
+  if(!user.verificarPassword(password)){
+    //Contraseña no coincidente
+    return res.render("auth/login", {
+      page: "Ingresar",
+      csrfToken: req.csrfToken(),
+      errors: [{msg: 'El email o la contraseña ingresada es incorrecta'}]
+    });
+  }
 };
 
 const formularioRegistro = (req, res) => {
@@ -226,18 +284,20 @@ const nuevoPassword = async (req, res) => {
   //Hashear password
   const salt = await bcrypt.genSalt(10);
   user.password = await bcrypt.hash(password, salt);
-  
-  user.token = null
 
-  await user.save()
+  user.token = null;
 
-  res.render('auth/confirm-account',{
-    page: '¡Has modificado tu contraseña correctamente!',
-    message: 'La nueva contraseña se guardo correctamente'
-  })
+  await user.save();
+
+  res.render("auth/confirm-account", {
+    page: "¡Has modificado tu contraseña correctamente!",
+    message: "La nueva contraseña se guardo correctamente",
+  });
 };
+
 export {
   formularioLogin,
+  authenticate,
   formularioRegistro,
   confirmarRegistro,
   formularioOlvideContraseña,

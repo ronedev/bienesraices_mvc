@@ -6,15 +6,21 @@ block contenidoMain
             span.font-normal Raices
         h2(class= "text-center font-extrabold text-2xl")= page
 
+        if errors 
+            div(class="max-w-md mx-auto my-4")
+                each error in errors
+                    p.bg-red-600.text-white.font-bold.uppercase.text-xs.text-center.p-2.mb-1= error.msg
+
         div.mt-4.mx-auto.max-w-md
             div.bg-white.py-6.px-4.shadow
-                form.space-y-2
+                form.space-y-2(method="POST" action="/auth/login" noValidate)
+                    input(type="hidden" name="_csrf" value= csrfToken)
                     div 
                         label(for="email").block.text-sm.text-gray-500.mb-3.font-bold Email de registro
-                        input(type="email" id="email" placeholder="Ingrese su email" required).w-full.px-3.py-1.border.border-gray-300.rounded-md.placeholder-gray-400.text-sm
+                        input(type="email" id="email" name="email" placeholder="Ingrese su email" required).w-full.px-3.py-1.border.border-gray-300.rounded-md.placeholder-gray-400.text-sm
                     div 
                         label(for="password").block.text-sm.text-gray-500.mb-3.font-bold Cree su contraseña
-                        input(type="password" id="password" placeholder="Ingrese su contraseña" required).w-full.px-3.py-1.border.border-gray-300.rounded-md.placeholder-gray-400.text-sm
+                        input(type="password" id="password" name="password" placeholder="Ingrese su contraseña" required).w-full.px-3.py-1.border.border-gray-300.rounded-md.placeholder-gray-400.text-sm
                     .flex.items-center.justify-between
                         a.text-gray-500.text-xs(href="/auth/signup") ¿No tienes cuenta aún? Crea tu cuenta
                         a.text-gray-500.text-xs(href="/auth/forgot-password") Olvide mi contraseña

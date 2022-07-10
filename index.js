@@ -3,6 +3,7 @@ import express from 'express'
 import csrf from 'csurf'
 import cookieParser from 'cookie-parser'
 import usuarioRoutes from './routes/usuarioRoutes.js'
+import propiedadesRoutes from './routes/propiedadesRoutes.js'
 import database from './config/database.js'
 
 //Creacion de la app
@@ -35,6 +36,7 @@ app.use( express.static('public'))
 
 //Routing
 app.use('/auth', usuarioRoutes)
+app.use('/', propiedadesRoutes)
 
 
 

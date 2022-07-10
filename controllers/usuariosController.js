@@ -71,7 +71,13 @@ const authenticate = async (req, res) => {
 
   const token = generarJWT({id: user.id, name: user.name})
 
-  console.log(token)
+  //Almacenar JWT en una cookie
+
+  return res.cookie('_token', token, {
+    httpOnly: true,
+    // secure: true,
+    // sameSite: true
+  }).redirect('my-properties')
 };
 
 const formularioRegistro = (req, res) => {

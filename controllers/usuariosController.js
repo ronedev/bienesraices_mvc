@@ -1,7 +1,7 @@
 import { check, validationResult } from "express-validator";
 import bcrypt from "bcrypt";
 import Usuario from "../models/Usuario.js";
-import { generarId } from "../helpers/tokens.js";
+import { generarJWT, generarId } from "../helpers/tokens.js";
 import { emailForgotPassword, emailRegistro } from "../helpers/emails.js";
 
 const formularioLogin = (req, res) => {
@@ -66,6 +66,12 @@ const authenticate = async (req, res) => {
       errors: [{msg: 'El email o la contraseña ingresada es incorrecta'}]
     });
   }
+
+  //Autenticar el usuario
+
+  const token = generarJWT({id: user.id, name: user.name})
+
+  console.log(token)
 };
 
 const formularioRegistro = (req, res) => {

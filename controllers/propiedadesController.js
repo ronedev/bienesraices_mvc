@@ -5,6 +5,14 @@ const admin = (req, res) =>{
     })
 }
 
+const create = (req,res)=>{
+    res.render('propiedades/create',{
+        page: 'Crear propiedad',
+        navbar: true
+    })
+}
+
 export{
-    admin
+    admin,
+    create
 }

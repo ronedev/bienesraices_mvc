@@ -28,10 +28,15 @@ block contenidoMain
                             label(for="category").block.text-sm.text-gray-500.mb-3.font-bold Categoria 
                             select(name="category" id="category").w-full.px-3.py-1.border.border-gray-300.rounded-md.placeholder-gray-400.text-sm
                                 option(value="") - Seleccione -
+                                each categoria in categorias 
+                                    option(value=categoria.id)=categoria.name 
+                                
                         div(class="w-1/2") 
                             label(for="price").block.text-sm.text-gray-500.mb-3.font-bold Rango de precio
                             select(name="price" id="price").w-full.px-3.py-1.border.border-gray-300.rounded-md.placeholder-gray-400.text-sm
                                 option(value="") - Seleccione -
+                                each precio in precios 
+                                    option(value=precio.id)=precio.name 
 
                     div(class="md:flex md:gap-4 md:space-y-0 space-y-3")
                         div(class="w-1/3")

@@ -22,7 +22,8 @@ const create = async (req,res)=>{
         navbar: true,
         csrfToken: req.csrfToken(),
         categorias,
-        precios
+        precios,
+        data: {}
     })
 }
 
@@ -44,7 +45,8 @@ const saveProperty = async (req, res) =>{
             csrfToken: req.csrfToken(),
             categorias,
             precios,
-            errors: response.array()
+            errors: response.array(),
+            data: req.body
         })
     }
 

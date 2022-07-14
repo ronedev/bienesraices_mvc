@@ -77,7 +77,7 @@ const authenticate = async (req, res) => {
     httpOnly: true,
     // secure: true,
     // sameSite: true
-  }).redirect('my-properties')
+  }).redirect('/my-properties')
 };
 
 const formularioRegistro = (req, res) => {

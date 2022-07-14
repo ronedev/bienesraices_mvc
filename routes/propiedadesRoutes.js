@@ -1,13 +1,14 @@
 import express from 'express'
 import { body } from 'express-validator'
-import { admin, create, saveProperty } from '../controllers/propiedadesController.js'
+import { addImage, admin, create, saveProperty } from '../controllers/propiedadesController.js'
 import protectRoute from '../middleware/protectRoute.js'
 
 const router = express.Router()
 
 router.get('/my-properties',protectRoute, admin)
 router.get('/properties/create',protectRoute, create)
-router.post('/properties/create', 
+router.post('/properties/create',
+    protectRoute,
     body('title').notEmpty().withMessage('Debe ingresar un título para su propiedad'),
     body('description')
         .notEmpty().withMessage('Debe ingresar una descripción para su propiedad')
@@ -20,5 +21,7 @@ router.post('/properties/create',
     body('lat').notEmpty().withMessage('Ubica tu propiedad en el mapa'),
     saveProperty
 )
+
+router.get('/properties/add-image/:id', addImage)
 
 export default router

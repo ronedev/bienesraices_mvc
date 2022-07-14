@@ -3,8 +3,7 @@ import { Categoria, Precio, Propiedad} from '../models/index.js'
 
 const admin = (req, res) =>{
     res.render('propiedades/admin',{
-        page: 'Mis propiedades',
-        navbar: true
+        page: 'Mis propiedades'
     })
 }
 
@@ -18,7 +17,6 @@ const create = async (req,res)=>{
 
     res.render('propiedades/create',{
         page: 'Crear propiedad',
-        navbar: true,
         csrfToken: req.csrfToken(),
         categorias,
         precios,
@@ -40,7 +38,6 @@ const saveProperty = async (req, res) =>{
 
         res.render('propiedades/create',{
             page: 'Crear propiedad',
-            navbar: true,
             csrfToken: req.csrfToken(),
             categorias,
             precios,
@@ -53,27 +50,49 @@ const saveProperty = async (req, res) =>{
 
     const {title, description, category: categoryId, price: priceId, bedrooms, parking, wc, street, lat, lng} = req.body
 
+    const {id: userId} = req.user
+
     try {
         const propiedad = await Propiedad.create({
             title,
             description,
-            categoryId,
-            priceId,
             bedrooms,
             parking,
             wc,
             street,
             lat,
-            lng
+            lng,
+            categoryId,
+            priceId,
+            userId,
+            image: ''
         })
+
+        const {id} = propiedad
+
+        res.redirect(`/properties/add-image/${id}`)
     } catch (error) {
         console.log(error)
     }
 
 }
 
+
+const addImage = async (req, res)=>{
+
+    res.render('propiedades/add-image',{
+        page: 'Agregar imagen',
+        csrfToken: req.csrfToken(),
+        // categorias,
+        // precios,
+        // errors: response.array(),
+        // data: req.body
+    })
+}
+
 export{
     admin,
     create,
-    saveProperty
+    saveProperty,
+    addImage
 }

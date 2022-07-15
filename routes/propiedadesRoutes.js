@@ -22,6 +22,6 @@ router.post('/properties/create',
     saveProperty
 )
 
-router.get('/properties/add-image/:id', addImage)
+router.get('/properties/add-image/:id',protectRoute, addImage)
 
 export default router

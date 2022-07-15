@@ -1,7 +1,7 @@
 extends ../layouts/admin.pug
 
 block styles 
-    link(rel="stylesheet" href="https://unpkg.com/leaflet@1.8.0/dist/leaflet.css")
+    link(rel="stylesheet", href="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.9.3/dropzone.css")
 
 block contenidoMain
     div(class="py-2")
@@ -11,10 +11,10 @@ block contenidoMain
 
         div(class="bg-white shadow py-8 px-4 rounded mx-auto w-full my-8 md:px-10")    
             
-            form(class="space-y-6" method="POST")
+            form(class="dropzone border-dashed border-2 w-full min-h-96 h-auto rounded flex-col justify-center items-center" method="POST" action="/properties/add-image/:id")
                 input(type="hidden" name="_csrf" value=csrfToken)
                     
-                input(type="submit" class="w-full py-2 bg-indigo-500 hover:bg-indigo-700 text-white text-sm uppercase font-semibold cursor-pointer rounded" value="Publicar propiedad")
+            input(type="submit" class="mt-5 w-full py-2 bg-indigo-500 hover:bg-indigo-700 text-white text-sm uppercase font-semibold cursor-pointer rounded" value="Publicar propiedad")
                         
 block scripts
     script(src="/js/addImage.js")

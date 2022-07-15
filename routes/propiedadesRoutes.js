@@ -1,7 +1,8 @@
 import express from 'express'
 import { body } from 'express-validator'
-import { addImage, admin, create, saveProperty } from '../controllers/propiedadesController.js'
+import { addImage, admin, create, saveProperty, storeImage } from '../controllers/propiedadesController.js'
 import protectRoute from '../middleware/protectRoute.js'
+import upload from '../middleware/uploadImage.js'
 
 const router = express.Router()
 
@@ -24,8 +25,6 @@ router.post('/properties/create',
 
 router.get('/properties/add-image/:id',protectRoute, addImage)
 
-router.post('/properties/add-image/:id', (req, res)=>{
-    console.log('subiendo...')
-})
+router.post('/properties/add-image/:id', protectRoute, upload.single('image'), storeImage)
 
 export default router

@@ -110,9 +110,44 @@ const addImage = async (req, res)=>{
     })
 }
 
+const storeImage = async (req, res, next)=>{
+    //Validar que la propiedad exista
+    const {id} = req.params
+
+    const propiedad = await Propiedad.findByPk(id)
+
+    if(!propiedad){
+        return res.redirect('/my-properties')
+    }
+
+    //Validar que la propiedad no se encuentre publicada
+    if(propiedad.confirmed){
+        return res.redirect('my-properties')
+    }
+
+    //Validar que la propiedad pertenece al usuario autenticado
+    if(req.user.id.toString() !== propiedad.userId.toString()){
+        return res.redirect('/my-properties')
+    }
+
+    try {
+        //Almacenar la referencia de la imagen y cambiar estado de publicacion
+        propiedad.image = req.file.filename //El req.file nos lo provee multer al usar el middleware de uploadImage
+        propiedad.published = 1
+
+        await propiedad.save()
+
+        next()
+
+    } catch (error) {
+        console.log(error)
+    }
+}
+
 export{
     admin,
     create,
     saveProperty,
-    addImage
+    addImage,
+    storeImage
 }

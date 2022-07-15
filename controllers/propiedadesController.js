@@ -176,8 +176,8 @@ const edit = async (req, res)=>{
         Precio.findAll()
     ])
 
-    res.render('propiedades/editar',{
-        page: 'Editar propiedad',
+    return res.render('propiedades/editar',{
+        page: `Editar propiedad ${propiedad.title}`,
         csrfToken: req.csrfToken(),
         categorias,
         precios,
@@ -185,8 +185,67 @@ const edit = async (req, res)=>{
     })
 }
 
-const editProperty = async (req, res)=>{
+const saveEditProperty = async (req, res)=>{
 
+    //Validar que no haya errores en el form
+    let response = validationResult(req)
+
+    if(!response.isEmpty()){
+
+        //Consultar modelo de precios y categorias
+        const [categorias, precios] = await Promise.all([
+            Categoria.findAll(),
+            Precio.findAll()
+        ])
+
+        return res.render('propiedades/editar',{
+            page: `Editar propiedad`,
+            csrfToken: req.csrfToken(),
+            categorias,
+            precios,
+            data: req.body,
+            errors: response.array()
+        })
+    }
+
+    const {id} = req.params
+
+    //validar que la propiedad exista
+    const propiedad = await Propiedad.findByPk(id)
+
+    if(!propiedad){
+        return res.redirect('/my-properties')
+    }
+
+    //validar que el usuario activo sea el dueño de la publicacion
+    if(req.user.id.toString() !== propiedad.userId.toString()){
+        return res.redirect('/my-properties')
+    }
+
+    //Reescribir el objeto y actualizarlo
+    try {
+        const {title, description, category: categoryId, price: priceId, bedrooms, parking, wc, street, lat, lng} = req.body
+
+        propiedad.set({
+            title,
+            description,
+            bedrooms,
+            parking,
+            wc,
+            street,
+            lat,
+            lng,
+            categoryId,
+            priceId
+        })
+
+        await propiedad.save()
+
+        res.redirect('/my-properties')
+        
+    } catch (error) {
+        console.log(error)
+    }
 }
 
 export{
@@ -196,5 +255,5 @@ export{
     addImage,
     storeImage,
     edit,
-    editProperty
+    saveEditProperty
 }

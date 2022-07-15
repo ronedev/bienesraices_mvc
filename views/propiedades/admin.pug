@@ -32,7 +32,7 @@ block contenidoMain
                                     form(action="#" class="flex justify-center w-full")
                                         input(type="submit" class=`w-full px-2 py-2 md:py-1 text-xs leading-5 font-semibold rounded ${propiedad.published ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}` value=`${propiedad.published ? 'Publicado' : 'Sin publicar'}`)
 
-                                    a(class="px-2 py-2 md:py-1 text-xs text-center leading-5 font-semibold rounded bg-indigo-300 text-indigo-800" href="#") Editar
+                                    a(class="px-2 py-2 md:py-1 text-xs text-center leading-5 font-semibold rounded bg-indigo-300 text-indigo-800" href=`/propetries/edit/${propiedad.id}`) Editar
 
                                     form(action="#" class="flex justify-center w-full")
                                         input(type="submit" class='w-full px-2 py-2 md:py-1 text-xs leading-5 font-semibold rounded bg-red-300 text-red-800' value='Eliminar')

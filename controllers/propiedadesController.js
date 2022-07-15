@@ -13,7 +13,6 @@ const admin = async (req, res) =>{
             ]
         })
 
-
     res.render('propiedades/admin',{
         page: 'Mis propiedades',
         propiedades
@@ -157,10 +156,45 @@ const storeImage = async (req, res, next)=>{
     }
 }
 
+const edit = async (req, res)=>{
+    const {id} = req.params
+
+    //validar que la propiedad exista
+    const propiedad = await Propiedad.findByPk(id)
+
+    if(!propiedad){
+        return res.redirect('/my-properties')
+    }
+    //validar que el usuario activo sea el dueño de la publicacion
+    if(req.user.id.toString() !== propiedad.userId.toString()){
+        return res.redirect('/my-properties')
+    }
+
+    //Consultar modelo de precios y categorias
+    const [categorias, precios] = await Promise.all([
+        Categoria.findAll(),
+        Precio.findAll()
+    ])
+
+    res.render('propiedades/editar',{
+        page: 'Editar propiedad',
+        csrfToken: req.csrfToken(),
+        categorias,
+        precios,
+        data: propiedad
+    })
+}
+
+const editProperty = async (req, res)=>{
+
+}
+
 export{
     admin,
     create,
     saveProperty,
     addImage,
-    storeImage
+    storeImage,
+    edit,
+    editProperty
 }

@@ -26,7 +26,7 @@ eval("(function webpackUniversalModuleDefinition(root, factory) {\n\tif(true)\n\
 /***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var dropzone__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! dropzone */ \"./node_modules/dropzone/dist/dropzone.js\");\n\r\n\r\n\n\n//# sourceURL=webpack://bienesraices_mvc/./src/js/add-image.js?");
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var dropzone__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! dropzone */ \"./node_modules/dropzone/dist/dropzone.js\");\n\r\n\r\nconst token = document.querySelector('meta[name=\"csrfToken\"]').getAttribute('content')\r\n\r\ndropzone__WEBPACK_IMPORTED_MODULE_0__.Dropzone.options.image = { //image viene del id del form donde esta funcionando dropzone\r\n    dictDefaultMessage: 'Arrastra tus imagenes aquí',\r\n    acceptedFiles: '.png,.jpg,.jpeg',\r\n    maxFilesize: 5,\r\n    maxFiles: 1,\r\n    parallelUploads: 1,\r\n    autoProcessQueue: true,\r\n    addRemoveLinks: true,\r\n    dictRemoveFile: 'Borrar archivo',\r\n    dictMaxFilesExceeded: 'El límite es 1 archivo',\r\n    headers: {\r\n        'CSRF-Token': token\r\n    }\r\n}\n\n//# sourceURL=webpack://bienesraices_mvc/./src/js/add-image.js?");
 
 /***/ })
 

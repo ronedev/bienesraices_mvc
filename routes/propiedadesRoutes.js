@@ -24,4 +24,8 @@ router.post('/properties/create',
 
 router.get('/properties/add-image/:id',protectRoute, addImage)
 
+router.post('/properties/add-image/:id', (req, res)=>{
+    console.log('subiendo...')
+})
+
 export default router

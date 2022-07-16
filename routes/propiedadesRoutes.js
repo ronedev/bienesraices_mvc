@@ -1,6 +1,6 @@
 import express from 'express'
 import { body } from 'express-validator'
-import { addImage, admin, create, edit, saveEditProperty, saveProperty, storeImage } from '../controllers/propiedadesController.js'
+import { addImage, admin, create, deleteProperty, edit, saveEditProperty, saveProperty, storeImage } from '../controllers/propiedadesController.js'
 import protectRoute from '../middleware/protectRoute.js'
 import upload from '../middleware/uploadImage.js'
 
@@ -42,5 +42,7 @@ router.post('/propetries/edit/:id',
     body('lat').notEmpty().withMessage('Ubica tu propiedad en el mapa'),
     saveEditProperty
 )
+
+router.post('/propetries/delete/:id', protectRoute, deleteProperty)
 
 export default router

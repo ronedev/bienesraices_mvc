@@ -1,10 +1,12 @@
 import express from 'express'
 import { body } from 'express-validator'
-import { addImage, admin, create, deleteProperty, edit, saveEditProperty, saveProperty, storeImage } from '../controllers/propiedadesController.js'
+import { addImage, admin, create, deleteProperty, edit, getProperty, saveEditProperty, saveProperty, storeImage } from '../controllers/propiedadesController.js'
 import protectRoute from '../middleware/protectRoute.js'
 import upload from '../middleware/uploadImage.js'
 
 const router = express.Router()
+
+//RUTAS PRIVADAS
 
 router.get('/my-properties',protectRoute, admin)
 router.get('/properties/create',protectRoute, create)
@@ -44,5 +46,8 @@ router.post('/propetries/edit/:id',
 )
 
 router.post('/propetries/delete/:id', protectRoute, deleteProperty)
+
+//RUTAS PÚBLICAS
+router.get('/property/:id', getProperty)
 
 export default router

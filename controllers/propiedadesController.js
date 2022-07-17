@@ -274,6 +274,15 @@ const deleteProperty = async (req, res)=>{
 
 }
 
+//Muestra una propiedad
+const getProperty = async (req, res) =>{
+    const {id} = req.params
+
+    res.render('propiedades/property',{
+        page: 'Propiedad'
+    })
+}
+
 export{
     admin,
     create,
@@ -282,5 +291,6 @@ export{
     storeImage,
     edit,
     saveEditProperty,
-    deleteProperty
+    deleteProperty,
+    getProperty
 }

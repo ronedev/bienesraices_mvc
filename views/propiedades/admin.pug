@@ -20,7 +20,7 @@ block contenidoMain
                                 div(class="sm:w-1/4 md:w-1/6")
                                     img(src=`uploads/${propiedad.image}` alt=`propiedad ${propiedad.title}` class="w-full block")
                                 div(class="sm:w-2/4 md:w-3/6 lg:w-4/6")
-                                    a(class="truncate font-extrabold block text-xl text-indigo-600" href="#")= propiedad.title
+                                    a(class="truncate font-extrabold block text-xl text-indigo-600" href=`/property/${propiedad.id}`)= propiedad.title
 
                                     p(class="text-sm text-gray-600")= propiedad.categoria.name 
 

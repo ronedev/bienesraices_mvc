@@ -278,8 +278,21 @@ const deleteProperty = async (req, res)=>{
 const getProperty = async (req, res) =>{
     const {id} = req.params
 
+    //Validar si la propiedad existe
+    const propiedad = await Propiedad.findByPk(id,{
+        include: [
+            {model: Categoria, as: 'categoria'},
+            {model: Precio, as: 'precio'}
+        ]
+    })
+
+    if(!propiedad){
+        return res.redirect('/404')
+    }
+
     res.render('propiedades/property',{
-        page: 'Propiedad'
+        page: `Propiedad: ${propiedad.title}`,
+        propiedad
     })
 }
 

@@ -4,21 +4,49 @@ import { Categoria, Precio, Propiedad} from '../models/index.js'
 
 const admin = async (req, res) =>{
 
-    const {id } = req.user
+    //Leer el query string para la paginacion
+    const {page: actualPage} = req.query
 
-    const propiedades = await Propiedad.findAll({
-            where: {userId: id},
-            include: [
-                {model: Categoria, as: 'categoria'},
-                {model: Precio, as: 'precio'}
-            ]
+    const expresionActualPage = /^[1-9]$/
+
+    if(!expresionActualPage.test(actualPage)){
+        return res.redirect('/my-properties?page=1')
+    }
+
+    try {
+        const {id } = req.user
+
+        //Limite y offset para la paginacion
+        const limit = 5
+        const offset = (actualPage * limit) - limit
+    
+        const [propiedades, total] = await Promise.all([
+            Propiedad.findAll({
+                limit,
+                offset,
+                where: {userId: id},
+                include: [
+                    {model: Categoria, as: 'categoria'},
+                    {model: Precio, as: 'precio'}
+                ]
+            }),
+            Propiedad.count({where: {userId: id}})
+        ])
+    
+        res.render('propiedades/admin',{
+            page: 'Mis propiedades',
+            csrfToken: req.csrfToken(),
+            propiedades,
+            actualPage: Number(actualPage),
+            totalPages: Math.ceil(total / limit),
+            total,
+            offset,
+            limit
         })
+    } catch (error) {
+        console.log(error)
+    }
 
-    res.render('propiedades/admin',{
-        page: 'Mis propiedades',
-        csrfToken: req.csrfToken(),
-        propiedades
-    })
 }
 
 const create = async (req,res)=>{

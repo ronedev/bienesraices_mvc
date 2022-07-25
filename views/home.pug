@@ -7,7 +7,8 @@ block contenidoMain
     div()
         h1(class="text-center text-2xl font-extrabold") Ubicación en el mapa
 
-        div(id="home-map")
+        div(id="home-map" class="h-[600px] mt-2")
 
 block scripts
     script(src="https://unpkg.com/leaflet@1.8.0/dist/leaflet.js")
+    script(src="/js/homeMap.js")

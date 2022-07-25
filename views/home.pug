@@ -26,6 +26,21 @@ block contenidoMain
 
         div(id="home-map" class="h-[400px] mt-2 mb-2")
 
+        section(class="py-2")
+            h2(class="text-center text-2xl font-bold pt-2") Casas en venta 
+
+            div(class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-2")
+                each propiedad in homes 
+                    include ./templates/homeCard
+
+        section(class="py-2")
+            h2(class="text-center text-2xl font-bold pt-2") Departamentos en venta
+
+            div(class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-2")
+                each propiedad in dptos
+                    include ./templates/homeCard
+                    //- pre= JSON.stringify(homes, undefined, 2)
+
 block scripts
     script(src="https://unpkg.com/leaflet@1.8.0/dist/leaflet.js")
     script(src="/js/homeMap.js")

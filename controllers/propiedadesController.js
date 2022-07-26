@@ -320,7 +320,8 @@ const getProperty = async (req, res) =>{
 
     res.render('propiedades/property',{
         page: `Propiedad: ${propiedad.title}`,
-        propiedad
+        propiedad,
+        csrfToken: req.csrfToken()
     })
 }
 

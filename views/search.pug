@@ -1,0 +1,16 @@
+extends layouts/app
+
+block styles 
+    link(rel="stylesheet" href="https://unpkg.com/leaflet@1.8.0/dist/leaflet.css")
+
+block contenidoMain
+    section(class="py-2")
+        h2(class="text-center text-2xl font-bold pt-2")= page
+
+        if propiedades.length
+            div(class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-2")
+                each propiedad in propiedades
+                    include ./templates/homeCard
+                    //- pre= JSON.stringify(homes, undefined, 2)
+        else 
+            p(class="text-center text-gray-800 text-sm py-10") No se encontraron resultados

@@ -9,8 +9,15 @@ header.bg-indigo-600.p-4
                     a(href="/auth/login" class="bg-indigo-700 py-2 px-6 rounded hover:bg-indigo-900") Iniciar sesión
                     
 div(class="bg-indigo-700 py-5 hidden lg:block")
-    div(class="container mx-auto flex justify-evenly")
-        a(href="/category/1" class="text-xs font-bold uppercase text-white") Casas
-        a(href="/category/2" class="text-xs font-bold uppercase text-white") Departamentos
-        a(href="/category/3" class="text-xs font-bold uppercase text-white") Terrenos
-        a(href="/category/4" class="text-xs font-bold uppercase text-white") Cabañas
+    div(class="container mx-auto flex justify-between")
+        nav(class="flex gap-4 items-center")
+            a(href="/category/1" class="text-xs font-bold uppercase text-white") Casas
+            a(href="/category/2" class="text-xs font-bold uppercase text-white") Departamentos
+            a(href="/category/3" class="text-xs font-bold uppercase text-white") Terrenos
+            a(href="/category/4" class="text-xs font-bold uppercase text-white") Cabañas
+        form(action="/searcher" method="POST" class="flex gap-3 items-center")
+            input(type="hidden" name="_csrf" value=csrfToken)
+            label(for="termino" class="text-xs uppercase font-bold text-white") Buscador 
+            input(name="termino" type="text" id="termino" placeholder="Buscar propiedad" class="p-2 rounded-lg shadow text-xs")
+
+            input(type="submit" class="bg-indigo-800 hover:bg-indigo-400 rounded-lg text-white uppercase font-bold p-2 cursor-pointer text-xs" value="Buscar")

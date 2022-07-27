@@ -1,6 +1,6 @@
 import { unlink } from 'node:fs/promises'
 import { validationResult } from 'express-validator'
-import { Categoria, Precio, Propiedad} from '../models/index.js'
+import { Categoria, Precio, Propiedad, Mensaje, Usuario} from '../models/index.js'
 import { isSeller } from '../helpers/index.js'
 
 const admin = async (req, res) =>{
@@ -28,7 +28,8 @@ const admin = async (req, res) =>{
                 where: {userId: id},
                 include: [
                     {model: Categoria, as: 'categoria'},
-                    {model: Precio, as: 'precio'}
+                    {model: Precio, as: 'precio'},
+                    {model: Mensaje, as: 'mensajes'}
                 ]
             }),
             Propiedad.count({where: {userId: id}})
@@ -328,6 +329,88 @@ const getProperty = async (req, res) =>{
     })
 }
 
+const sendMessage = async (req, res) =>{
+    const {id} = req.params
+
+    //Validar si la propiedad existe
+    const propiedad = await Propiedad.findByPk(id,{
+        include: [
+            {model: Categoria, as: 'categoria'},
+            {model: Precio, as: 'precio'}
+        ]
+    })
+
+    if(!propiedad){
+        return res.redirect('/404')
+    }
+
+    //Renderizar los errores en caso de tener
+    let response = validationResult(req)
+
+    if(!response.isEmpty()){
+
+        return res.render('propiedades/property',{
+            page: `Propiedad: ${propiedad.title}`,
+            propiedad,
+            csrfToken: req.csrfToken(),
+            user: req.user,
+            isSeller: isSeller(req.user?.id, propiedad.userId),
+            errors: response.array()
+        })
+    }
+
+    const {message} = req.body
+    const {id: propertyId} = req.params
+    const {id: userId} = req.user
+
+    //Almacenar mensaje
+    await Mensaje.create({
+        message,
+        propertyId,
+        userId
+    })
+
+
+    res.render('propiedades/property',{
+        page: `Propiedad: ${propiedad.title}`,
+        propiedad,
+        csrfToken: req.csrfToken(),
+        user: req.user,
+        isSeller: isSeller(req.user?.id, propiedad.userId),
+        messageSent: true
+    })
+}
+
+//Leer mensajes recibidos
+const messages = async (req,res)=>{
+    const {id} = req.params
+
+    //validar que la propiedad exista
+    const propiedad = await Propiedad.findByPk(id, {
+        include: [
+            {model: Mensaje, as: 'mensajes',
+                include: [
+                    {model: Usuario.scope('deleteSensitiveInfo'), as: 'usuario'}
+                ]
+            }
+        ]
+    })
+
+    if(!propiedad){
+        return res.redirect('/my-properties')
+    }
+
+    //validar que el usuario activo sea el dueño de la publicacion
+    if(req.user.id.toString() !== propiedad.userId.toString()){
+        return res.redirect('/my-properties')
+    }
+
+    res.render('propiedades/mensajes',{
+        page: 'Mensajes',
+        messages: propiedad.mensajes
+    })
+}
+
 export{
     admin,
     create,
@@ -337,5 +420,7 @@ export{
     edit,
     saveEditProperty,
     deleteProperty,
-    getProperty
+    getProperty,
+    sendMessage,
+    messages
 }

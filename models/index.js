@@ -1,4 +1,5 @@
 import Categoria from "./Categoria.js";
+import Mensaje from "./Mensaje.js";
 import Precio from "./Precio.js";
 import Propiedad from "./Propiedad.js";
 import Usuario from "./Usuario.js";
@@ -12,13 +13,18 @@ Propiedad.belongsTo(Precio, {foreignKey: 'priceId'})
 //Relacion de 1:1 entre propiedad y categoria, donde la foreign key en propiedad se llamara categoriaId
 Propiedad.belongsTo(Categoria, {foreignKey: 'categoryId'})
 // Categoria.hasOne(Propiedad, {foreignKey: 'categoryId'})
+Propiedad.hasMany(Mensaje, {foreignKey: 'propertyId'})
 
 //Relacion de 1:1 entre propiedad y categoria, donde la foreign key en propiedad se llamara userId
 Usuario.hasOne(Propiedad, {foreignKey: 'userId'})
+
+Mensaje.belongsTo(Propiedad, {foreignKey: 'propertyId'})
+Mensaje.belongsTo(Usuario, {foreignKey: 'userId'})
 
 export {
     Categoria,
     Precio,
     Propiedad,
-    Usuario
+    Usuario,
+    Mensaje
 }

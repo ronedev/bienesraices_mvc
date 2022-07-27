@@ -1,6 +1,6 @@
 import express from 'express'
 import { body } from 'express-validator'
-import { addImage, admin, create, deleteProperty, edit, getProperty, saveEditProperty, saveProperty, storeImage } from '../controllers/propiedadesController.js'
+import { addImage, admin, create, deleteProperty, edit, getProperty, messages, saveEditProperty, saveProperty, sendMessage, storeImage } from '../controllers/propiedadesController.js'
 import protectRoute from '../middleware/protectRoute.js'
 import upload from '../middleware/uploadImage.js'
 import identifyUser from '../middleware/identifyUser.js'
@@ -47,8 +47,12 @@ router.post('/propetries/edit/:id',
 )
 
 router.post('/propetries/delete/:id', protectRoute, deleteProperty)
+router.get('/messages/:id', protectRoute, messages)
 
 //RUTAS PÚBLICAS
 router.get('/property/:id', identifyUser, getProperty)
+
+//Almacenar los menajes
+router.post('/property/:id', identifyUser, body('message').isLength({min: 10}).withMessage('Mensaje demasiado corto'), sendMessage)
 
 export default router

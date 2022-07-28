@@ -304,6 +304,32 @@ const deleteProperty = async (req, res)=>{
 
 }
 
+//Cambiar estado de la propiedad
+const changeState = async (req,res)=>{
+    const {id} = req.params
+
+    //validar que la propiedad exista
+    const propiedad = await Propiedad.findByPk(id)
+
+    if(!propiedad){
+        return res.redirect('/my-properties')
+    }
+
+    //validar que el usuario activo sea el dueño de la publicacion
+    if(req.user.id.toString() !== propiedad.userId.toString()){
+        return res.redirect('/my-properties')
+    }
+
+    //Actualizar propiedad
+    propiedad.published = !propiedad.published
+
+    await propiedad.save()
+
+    res.json({
+        response: true
+    })
+}
+
 //Muestra una propiedad
 const getProperty = async (req, res) =>{
     const {id} = req.params
@@ -316,7 +342,7 @@ const getProperty = async (req, res) =>{
         ]
     })
 
-    if(!propiedad){
+    if(!propiedad || !propiedad.published){
         return res.redirect('/404')
     }
 
@@ -421,6 +447,7 @@ export{
     edit,
     saveEditProperty,
     deleteProperty,
+    changeState,
     getProperty,
     sendMessage,
     messages

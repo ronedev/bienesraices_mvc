@@ -1,6 +1,6 @@
 import express from 'express'
 import { body } from 'express-validator'
-import { addImage, admin, create, deleteProperty, edit, getProperty, messages, saveEditProperty, saveProperty, sendMessage, storeImage } from '../controllers/propiedadesController.js'
+import { addImage, admin, create, deleteProperty, changeState, edit, getProperty, messages, saveEditProperty, saveProperty, sendMessage, storeImage } from '../controllers/propiedadesController.js'
 import protectRoute from '../middleware/protectRoute.js'
 import upload from '../middleware/uploadImage.js'
 import identifyUser from '../middleware/identifyUser.js'
@@ -47,6 +47,9 @@ router.post('/propetries/edit/:id',
 )
 
 router.post('/propetries/delete/:id', protectRoute, deleteProperty)
+
+router.put('/propetries/:id', protectRoute, changeState)
+
 router.get('/messages/:id', protectRoute, messages)
 
 //RUTAS PÚBLICAS

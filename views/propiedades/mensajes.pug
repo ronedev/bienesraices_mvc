@@ -19,6 +19,6 @@ block contenidoMain
                         p(class="font-bold text-gray-800") Mensaje: 
                             span(class="font-normal")= message.message
                         p(class="font-bold text-gray-800") Enviado: 
-                            span(class="font-normal")= message.createdAt
+                            span(class="font-normal")= dateFormatter(message.createdAt)
         else 
             p(class="text-center text-gray-600 p-5") No hay mensajes
